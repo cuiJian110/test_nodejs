@@ -12,6 +12,9 @@ const login = require("./interface/login");
 const home = require("./interface/home");
 
 routers.get("/getData/:id",home.getData);
+routers.get("/getStudents",home.getStudents);
+routers.post("/addStudent",home.addStudents);
+routers.post("/delStudent",home.delStudent);
 routers.post("/testPost666",home.testPost);
 routers.post("/login",login.handleLogin)
 
