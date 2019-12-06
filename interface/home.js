@@ -1,12 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2019-12-05 16:39:36
- * @LastEditTime: 2019-12-05 16:42:16
+ * @LastEditTime: 2019-12-06 10:50:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \nnode\interface\home.js
  */
-const conn = require("../db");
+const conn = require("../db/gz");
+const DB_NAME = require("../db/db_name");
+// console.log(conn.Protocol.ConnectionConfig);
 const homeModule = {
     getData(req , res) {
         console.log(req.params.id);
@@ -21,7 +23,8 @@ const homeModule = {
         res.send(obj);
     },
     getStudents(req,res) {
-        const sql = "select * from students";
+        const sql = `select * from ${DB_NAME} order by id`;
+        // console.log(sql);
         conn.query(sql,(err,result,field) => {
             // console.log(result);
             res.send(result)
@@ -29,7 +32,7 @@ const homeModule = {
     },
     addStudents(req, res) {
         const {name, gender} = req.body;
-        const sql = `insert into students (name, gender) values ("${name}","${gender}")`;
+        const sql = `insert into ${DB_NAME} (name, gender) values ("${name}","${gender}")`;
         // console.log(sql);
         conn.query(sql,(err,results) => {
             // console.log(results);
@@ -53,13 +56,30 @@ const homeModule = {
         })
     },
     delStudent(req,res) {
-        const sql = `delete from students where id = ${req.body.id}`;
+        const sql = `delete from ${DB_NAME} where id = ${req.body.id}`;
         conn.query(sql,(err,results) => {
             console.log(results);
             if(results.affectedRows === 1) {
                 res.send({
                     status: 200,
                     message: "del成功"
+                })
+            }
+        })
+    },
+    editStudent(req, res) {
+        const {id, name, gender} = req.body;
+        const sql = `update ${DB_NAME} set name="${name}",gender="${gender}" where id=${id}`;
+        conn.query(sql, (err,results) => {
+            if(results.affectedRows === 1) {
+                res.send({
+                    status: 200,
+                    message: "update success"
+                })
+            } else {
+                res.send({
+                    status: 500,
+                    message: "update false"
                 })
             }
         })
